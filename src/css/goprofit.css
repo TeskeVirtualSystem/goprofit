@@ -1,0 +1,53 @@
+#zscale-1 .slider-selection {
+	background: #8283FF;
+}
+#zscale-1 .slider-handle {
+	border-bottom-color: blue;
+}
+
+#zoffset-1 .slider-selection {
+	background: #428041;
+}
+#brightness-1 .slider-selection {
+	background: rgba(0,0,0,0);
+}
+#brightness-1 .slider-track {
+	background: #000000; /* Old browsers */
+	background: -moz-linear-gradient(left, #000000 0%, #ffffff 100%, #05abe0 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#000000), color-stop(100%,#ffffff), color-stop(100%,#05abe0)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, #000000 0%,#ffffff 100%,#05abe0 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, #000000 0%,#ffffff 100%,#05abe0 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, #000000 0%,#ffffff 100%,#05abe0 100%); /* IE10+ */
+	background: linear-gradient(to right, #000000 0%,#ffffff 100%,#05abe0 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#05abe0',GradientType=1 ); /* IE6-9 */
+}
+
+#drop_zone	{
+	width: 722px;
+	height: 122px;
+	border-style: dashed;
+	text-align: center;
+}
+
+.dropimage	{
+    display: block;
+    max-width:720px;
+    max-height:120px;
+    width: auto;
+    height: auto;
+}
+
+#resettrack	{
+	position: absolute;
+	top: 55px;
+	left: 30px;
+}
+
+.gpf-field	{
+	height: 20px;
+	font-size: 10px;
+}
+
+.gpf-panel	{
+	line-height: 7px;
+}
