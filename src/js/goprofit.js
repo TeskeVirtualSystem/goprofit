@@ -53,6 +53,109 @@ $( document ).ready(function() {
 	animate();
 });
 
+function RenderHighRes()	{
+	var vrenderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, antialias: true});
+	var width = object.material.map.image.naturalWidth;
+	var height = object.material.map.image.naturalHeight;
+	vrenderer.setSize( width, height  );
+
+	var vcamera = new THREE.PerspectiveCamera( 45, width/height, 1, 1000 );
+	vcamera.position.z = 400;
+	var vscene = new THREE.Scene();
+	vscene.add( new THREE.AmbientLight( 0xFFFFFF ) );
+	
+	// Post Process
+	var vcomposer = new THREE.EffectComposer( vrenderer );
+	vcomposer.addPass( new THREE.RenderPass( vscene, vcamera ) );
+
+	var vbrightnessShader = new THREE.ShaderPass( THREE.BrightnessContrastShader );
+	vcomposer.addPass( vbrightnessShader );
+
+	var vvignetteShader = new THREE.ShaderPass( THREE.VignetteShader );  
+	vcomposer.addPass( vvignetteShader );
+
+
+
+	var vhuesaturationShader = new THREE.ShaderPass( THREE.HueSaturationShader );
+	vcomposer.addPass( vhuesaturationShader );
+
+	var vFXAAShader = new THREE.ShaderPass( THREE.FXAAShader );  
+	vFXAAShader.renderToScreen = true;
+	vFXAAShader.uniforms['resolution'].value.set(1 / width, 1 / height);
+	vcomposer.addPass( vFXAAShader );
+
+	vbrightnessShader.uniforms[ 'brightness' ].value = brightness / 100;
+	vbrightnessShader.uniforms[ 'contrast' ].value = contrast / 100;
+	vhuesaturationShader.uniforms[ 'hue' ].value = hue / 100;
+	vhuesaturationShader.uniforms[ 'saturation' ].value = saturation / 100;
+	vvignetteShader.uniforms[ 'offset' ].value = voffset;
+	vvignetteShader.uniforms[ 'darkness' ].value = vdarkness;
+
+	console.log("Set map to load");
+	var map = THREE.ImageUtils.loadTexture( object.material.map.image.src , new THREE.UVMapping(), function()	{
+		console.log("Map loaded!");
+		console.log("Creating geometry");
+		density[0] *= 2;
+		density[1] *= 2;
+		var imageAspect = map.image.naturalWidth / map.image.naturalHeight;
+		var vobject = new THREE.Mesh( new THREE.PlaneGeometry(300*imageAspect, 300, density[0], density[1]), material  );
+		vobject.position.set( 0, 0, 0 );
+		vobject.overdraw = true;
+	
+		console.log("Adjusting perspective");
+		vobject.geometry.dynamic = true;
+		for(var y=0;y<density[1]+1;y++)	{
+			for(var x=0;x<density[0]+1;x++)	{
+				var p = y * (density[1]+1) + x;
+				var rx = ((x/(density[0]))-0.5) * zscale*imageAspect;
+				var ry = ((y/(density[1]))-0.5) * zscale;
+				vobject.geometry.vertices[p].z = rx*rx + ry*ry + offsetz ;
+			}
+		}
+		vscene.add( vobject );
+		vcamera.lookAt( vobject.position );
+
+		console.log("Rendering");
+		vcomposer.render();	
+		density[0] /= 2;
+		density[1] /= 2;
+		console.log("Rendered! Exporting");
+		var URL = vcomposer.renderer.domElement.toDataURL("image/jpeg");
+		console.log("Exported! Opening");
+		var blob = dataURItoBlob(URL);
+		var burl = window.URL.createObjectURL(blob);
+		window.open(burl);
+
+	});
+
+	//map.anisotropy = 16;
+	map.magFilter = THREE.Linear;
+	map.minFilter = THREE.Linear;
+	var material = new THREE.MeshBasicMaterial( { ambient: 0xFFFFFF, map : map, side: THREE.DoubleSide,shading: THREE.FlatShading  } );
+
+
+}
+
+function dataURItoBlob(dataURI) {
+    // convert base64/URLEncoded data component to raw binary data held in a string
+    var byteString;
+    if (dataURI.split(',')[0].indexOf('base64') >= 0)
+        byteString = atob(dataURI.split(',')[1]);
+    else
+        byteString = unescape(dataURI.split(',')[1]);
+
+    // separate out the mime component
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to a typed array
+    var ia = new Uint8Array(byteString.length);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([ia], {type:mimeString});
+}
+
 function init() {
 	glctx = document.getElementById('glctx');
 
@@ -85,15 +188,13 @@ function init() {
 
 		scene.add( object );
 		camera.lookAt( object.position );
-
-
 	});
 	//map.wrapS = map.wrapT = THREE.RepeatWrapping;
 	map.anisotropy = 16;
 	map.magFilter = THREE.NearestFilter;
 	map.minFilter = THREE.LinearMipMapLinearFilter;
 
-	var material = new THREE.MeshLambertMaterial( { ambient: 0xFFFFFF, map: map, side: THREE.DoubleSide } );
+	var material = new THREE.MeshBasicMaterial( { ambient: 0xFFFFFF, map: map, side: THREE.DoubleSide,shading: THREE.FlatShading } );
 
 
 	renderer = new THREE.WebGLRenderer( { antialias: true , alpha: true} );
@@ -156,6 +257,9 @@ function InitDropOver()	{
 function InitHandlers()	{
 	$("#resettrack").click(function()	{
 		controls.reset();
+	});
+	$("#renderhighres").click(function()	{
+		RenderHighRes();
 	});
 
 	$('.slider').slider();

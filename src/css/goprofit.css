@@ -43,6 +43,12 @@
 	left: 30px;
 }
 
+#renderhighres	{
+	position: absolute;
+	top: 55px;
+	right: 30px;
+}
+
 .gpf-field	{
 	height: 20px;
 	font-size: 10px;
