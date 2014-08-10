@@ -27,4 +27,4 @@ The Original Image:
 
 The Corrected Image:
 ![Corrected Image](samples/corrected1.jpg)
-Used params: [a link](samples/params1.txt)
+Used params: [Correction Parameters](samples/params1.txt)
