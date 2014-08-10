@@ -12,6 +12,8 @@ GoPro Online Lens Correction
 
 Uses: Three.JS , Bootstrap, Slider for Bootstrap
 
+You can see a working example [Here](http://www.teske.net.br/goprofit/)
+
 TODO: 
 *	Better render - For now we have few issues in the output quality :/
 *	Automatic Idealsize find
