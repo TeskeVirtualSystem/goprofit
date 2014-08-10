@@ -489,11 +489,15 @@ function handleFileSelect(evt) {
 			reader.onload = function(e) {
 				var dataURL = reader.result;
 				$("#drop_zone").html("<center><img class=\"dropimage\"  src=\""+dataURL+"\"/></center>");
-				object.material.map = THREE.ImageUtils.loadTexture( dataURL ,new THREE.UVMapping(), function()	{
-					console.log("Width: ",object.material.map.image.naturalWidth);
-					console.log("Height: ",object.material.map.image.naturalHeight);
-					imageAspect = object.material.map.image.naturalWidth / object.material.map.image.naturalHeight;
+				var map = THREE.ImageUtils.loadTexture( dataURL ,new THREE.UVMapping(), function()	{
+					console.log("Width: ",map.image.naturalWidth);
+					console.log("Height: ",map.image.naturalHeight);
+					imageAspect = map.image.naturalWidth / map.image.naturalHeight;
 					console.log("Aspect Ratio: ",imageAspect);
+					scene.remove(object);
+					object = new THREE.Mesh( new THREE.PlaneGeometry(300*imageAspect, 300, density[0], density[1]), material );
+					object.position.set( 0, 0, 0 );
+					object.overdraw = true;
 					object.geometry.dynamic = true;
 					for(var y=0;y<density[1]+1;y++)	{
 						for(var x=0;x<density[0]+1;x++)	{
@@ -504,10 +508,15 @@ function handleFileSelect(evt) {
 							object.geometry.vertices[p].z = rx*rx + ry*ry + offsetz ;
 						}
 					}
+					scene.add(object);
 				});
+				map.anisotropy = 16;
+				map.magFilter = THREE.NearestFilter;
+				map.minFilter = THREE.LinearMipMapLinearFilter;
 
-				object.material.needsUpdate = true;
+				var material = new THREE.MeshBasicMaterial( { ambient: 0xFFFFFF, map: map, side: THREE.DoubleSide,shading: THREE.FlatShading } );
 			}
+
 			reader.readAsDataURL(f);
         }
     }
