@@ -1,0 +1,8 @@
+Z-Scale: 12
+Z-Position: 20
+Brightness: 6
+Contrast: 27
+Hue: 0
+Saturation: 18
+Vignette Offset: 1.25
+Vignette Darkness: 0.99
