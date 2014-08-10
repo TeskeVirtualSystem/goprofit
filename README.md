@@ -22,6 +22,9 @@ Screenshot:
 
 Samples:
 
-![GoProFit Screenshot](samples/original1.jpg)
-![GoProFit Screenshot](samples/corrected1.jpg)
+The Original Image:
+![Original Image](samples/original1.jpg)
+
+The Corrected Image:
+![Corrected Image](samples/corrected1.jpg)
 Used params: [a link](samples/params1.txt)
